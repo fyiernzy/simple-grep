@@ -4,8 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexStream extends SearchStream {
+	private final Pattern PATTERN;
+	
+	public RegexStream(String file, String regex) {
+		super(file);
+		this.PATTERN = Pattern.compile(regex);
+	}
+	
 	@Override
-	public RegexStream filterArgument(String[] keywordList) {
+	public RegexStream filterArgument(String... keywordList) {
 		return (RegexStream) super.filterArgument(keywordList);
 	}
 	
@@ -14,38 +21,40 @@ public class RegexStream extends SearchStream {
 		return (RegexStream) super.readContent();
 	}
 	
-	public RegexStream filterRegex(String regex) {
-		StringBuilder tmp = new StringBuilder();
-		for(String sentence : this.content.toString().split("\n")) {
-			if (sentence.matches(regex))
-				tmp.append(sentence + "\n");
+	public RegexStream filterRegex() {
+		String[] lines = this.content.toString().split("\n");
+		this.content.setLength(0);
+		
+		for(String line : lines) {
+			if (Pattern.matches(this.PATTERN.pattern(), line))
+				this.content.append(line).append("\n");
 		}
 		
-		System.out.println((tmp.length() > 0) ? tmp : "No record found");
-		this.content = tmp;
 		return this;
 	}
 	
-	public RegexStream extractRegex(String regex, StringBuilder record) {
+	public RegexStream extractRegex(StringBuilder record) {
 		if (record == null || record.length() == 0) {
 			System.out.println("The previous record is null");
 			return this;
 		}
 		
-		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher;
-		StringBuilder sb = new StringBuilder();
 		
-		for(String sentence : record.toString().split("\n")) {
-			matcher = pattern.matcher(sentence);
+		String[] lines = record.toString().split("\n");
+		this.content.setLength(0);
+		
+		for(String line : lines) {
+			matcher = this.PATTERN.matcher(line);
 			if (matcher.matches()) {
 				for(int i = 1; i <= matcher.groupCount(); i++) {
-					sb.append(matcher.group(i) + (i == matcher.groupCount() - 1 ? "\n" : ","));
+					this.content.append(matcher.group(i)).append((i == matcher.groupCount() ? "\n" : ","));
 				}
 			}
 		}
 		
-		System.out.println((sb.length() > 0) ? sb : "Nothing can be extracted.");
+		System.out.println((this.content.length() > 0) ? this.content : "Nothing can be extracted.");
+		
 		return this;
 	}
 }

@@ -7,42 +7,27 @@ import java.time.LocalDate;
 
 public class CommandCheckerFactory {
 	public static boolean checkCommand(String command, LocalDate rangeStart, LocalDate rangeEnd) {
-		String[] commands = command.split(RegexConst.SPLIT_REGEX);
-		boolean isValid;
+		String[] commands = RegexConst.SPLIT.split(command);
 		
 		if (!commands[0].equals(Configuration.getCommandHead())) {
 			System.out.printf("Invalid command head: %s. Command head: %s\n", commands[0], Configuration.getCommandHead());
 			return false;
 		}
 		
-		switch(commands[1]) {
-			case CommandConst.FOP_FIND:
-				isValid = FindCommandChecker.checkFindCommand(command);
-				break;
-			case CommandConst.FOP_SAVE: 
-				isValid = SaveCommandChecker.checkSaveCommand(command);
-				break;
-			case CommandConst.FOP_LIST: 
-				isValid = ListCommandChecker.checkListCommand(command, rangeStart, rangeEnd);
-				break;
-			case CommandConst.FOP_REGEX:
-				isValid = RegexCommandChecker.checkRegexCommand(command);
-				break;
-			case CommandConst.FOP_LOG:
-				isValid = LogCommandChecker.checkLogCommand(command);
-				break;
-			case CommandConst.FOP_CONFIG:
-				isValid = ConfigCommandChecker.checkConfigCommand(command);
-				break;
-			case CommandConst.FOP_READ:
-				isValid = ReadCommandChecker.checkReadCommand(command);
-				break;
-			default:
-				isValid = false;
-				System.out.println("Undefined command: " + commands[1]);
-				break;
+		if (!CommandConst.FOP_LS.contains(commands[1])) {
+			System.out.println("Undefined command: " + commands[1]);
+			return false;
 		}
 		
-		return isValid;
+		return switch(commands[1]) {
+			case CommandConst.FOP_FIND -> new FindCommandChecker(commands).check();
+			case CommandConst.FOP_SAVE -> new SaveCommandChecker(commands).check();
+			case CommandConst.FOP_LIST ->  new ListCommandChecker(commands, rangeStart, rangeEnd).check();
+			case CommandConst.FOP_REGEX -> new RegexCommandChecker(commands).check();
+			case CommandConst.FOP_LOG -> new LogCommandChecker(commands).check();
+			case CommandConst.FOP_CONFIG -> new ConfigCommandChecker(commands).check();
+			case CommandConst.FOP_READ -> new ReadCommandChecker(commands).check();
+			default -> false;
+		};
 	}
 }

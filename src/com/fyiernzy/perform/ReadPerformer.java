@@ -3,16 +3,17 @@ package com.fyiernzy.perform;
 import com.fyiernzy.search.ReadStream;
 
 public class ReadPerformer extends SearchPerformer {
-	public ReadPerformer(StringBuilder command) {
-		super(command);
+	public ReadPerformer(String file, StringBuilder command) {
+		super(file, command);
 	}
 	
 	@Override
 	public StringBuilder perform() {
-		return new ReadStream()
-				.readContent()
-				.filterArgument(getCommandList(3))
-				.limitContent(Integer.parseInt(command.toString().split(" ")[2]))
-				.toResult();
+		String[] keywords = this.getCommandList(3);
+		int numOfContents = Integer.parseInt(this.COMMAND.toString().split(" ")[2]);
+		
+		return new ReadStream(this.SOURCE).readContent()
+										  .filterArgument(keywords)
+										  .limitContent(numOfContents).toResult();
 	}
 }

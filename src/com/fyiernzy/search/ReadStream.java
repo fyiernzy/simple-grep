@@ -1,8 +1,12 @@
 package com.fyiernzy.search;
 
 public class ReadStream extends SearchStream {
+	public ReadStream(String file) {
+		super(file);
+	}
+	
 	@Override
-	public ReadStream filterArgument(String[] keywordList) {
+	public ReadStream filterArgument(String... keywordList) {
 		return (ReadStream) super.filterArgument(keywordList);
 	}
 	
@@ -12,15 +16,13 @@ public class ReadStream extends SearchStream {
 	}
 	
 	public ReadStream limitContent(int index) {
-		StringBuilder tmp = new StringBuilder();
 		String[] split = this.content.toString().split("\n");
-		int num = (index < split.length) ? index : split.length;
+		int max = Math.min(index, split.length);
+		this.content.setLength(0);
 		
-		for(int i = 0; i < num; i++) {
-			tmp.append(split[i] + "\n");
-		}
+		for(int i = 0; i < max; i++) 
+			this.content.append(split[i]).append("\n");
 		
-		this.content = tmp;
 		return this;
 	}
 }

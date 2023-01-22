@@ -1,5 +1,7 @@
 package com.fyiernzy.constant;
 
+import java.util.*;
+
 public class CommandConst {
 	// count // within a period of time // save
 	// time invalid bug
@@ -12,5 +14,7 @@ public class CommandConst {
 	public static final String FOP_CONFIG = "config"; // Done
 	public static final String FOP_READ = "read"; // Done
 	public static final String FOP_ANALYZE = "analyze"; // simple data analysis
+	
+	public static final List<String> FOP_LS = Arrays.asList(new String[] {FOP_FIND, FOP_SAVE, FOP_LIST, FOP_REGEX, FOP_LOG, FOP_CONFIG, FOP_READ, FOP_ANALYZE});
 	
 }

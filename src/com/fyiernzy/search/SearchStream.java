@@ -1,47 +1,41 @@
 package com.fyiernzy.search;
 
-import java.io.*;
-import java.util.regex.*;
-import java.time.LocalDate;
-
-import com.fyiernzy.constant.RegexConst;
-import com.fyiernzy.system.Configuration;
+import java.nio.file.*;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public abstract class SearchStream {
+	protected final String SOURCE;
 	protected StringBuilder content;
 	
-	SearchStream() {
+	SearchStream(String file) {
+		this.SOURCE = file;
 		this.content = new StringBuilder();
 	}
 	
-	public SearchStream filterArgument(String[] keywordList) {
-		StringBuilder tmp;
-		StringBuilder filtered = this.content;
-		
-		for(int i = 0; i < keywordList.length; i++) {
-			tmp = new StringBuilder();
-			for(String sentence : filtered.toString().split("\n")) {
-				if(sentence.contains(keywordList[i]))
-					tmp.append(sentence + "\n");
-			}
-			filtered = tmp;
+	public SearchStream filterArgument(String... keywordList) {
+		if (this.content.length() <= 0) {
+			System.out.println("No content to be filtered");
+			return this;
 		}
 		
-		this.content = filtered;
+		Stream<String> lines = Arrays.stream(this.content.toString().split("\n"));
+		
+		this.content.setLength(0);
+		
+		lines.filter(line -> Arrays.stream(keywordList).allMatch(line::contains))
+			 .forEach(line -> this.content.append(line).append("\n"));
+
+	
 		return this;
 	}
 	
 	public SearchStream readContent() {
-		StringBuilder content = new StringBuilder();
-		String line;
-		
-		try (BufferedReader reader = new BufferedReader(new FileReader(Configuration.getSourceFile()))) {			
-			while((line = reader.readLine()) != null) 
-				content.append(line + "\n");
+		try (Stream<String> lines = Files.lines(Paths.get(this.SOURCE))) {		
+			lines.forEach(line -> this.content.append(line).append("\n"));
 			
 		} catch (Exception ex) {}
-		
-		this.content = content;
+
 		return this;
 	}
 	

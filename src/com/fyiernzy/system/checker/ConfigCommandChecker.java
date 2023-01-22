@@ -1,35 +1,36 @@
 package com.fyiernzy.system.checker;
 
-import com.fyiernzy.constant.RegexConst;
 import com.fyiernzy.constant.ConfigConst;
 import com.fyiernzy.system.Configuration;
 
-public class ConfigCommandChecker {
+public class ConfigCommandChecker extends CommandChecker {
+	ConfigCommandChecker(String[] commands) {
+		super(commands);
+	}
 	
-	public static boolean checkConfigCommand(String command) {
-		String[] commands = command.split(" ");
-		
-		if (commands.length == 3) {
-			if (commands[2].equals("default")) {
+	@Override
+	public boolean check() {
+		if (this.COMMANDS.length == 3) {
+			if (this.COMMANDS[2].equals("default")) {
 				return true;
 			} else {
-				System.out.println("Invalid command: " + command);
+				System.out.println("Invalid command: " + this.COMMANDS);
 				return false;
 			}
 		}
 		
-		if (commands.length != 4) {
-			System.out.printf("Invalid command: %s. Correct format: %s config <type> <argument>.\n", command, Configuration.getCommandHead());
+		if (this.COMMANDS.length != 4) {
+			System.out.printf("Invalid command: %s. Correct format: %s config <type> <argument>.\n", this.COMMANDS, Configuration.getCommandHead());
 			return false;
 		}
 		
-		if(!ConfigConst.CONFIG_LIST.contains(commands[2])) {
+		if(!ConfigConst.CONFIG_LIST.contains(this.COMMANDS[2])) {
 			System.out.printf("Invalid argument: %s. Valid argument lists:\n1. --user.name\n2. --user.email\n3. --system.decor\n4. --system.head\n");
 			return false;
 		}
 		
-		if (!commands[3].matches(".*")) {
-			System.out.println("Invalid argument: " + commands[3]);
+		if (!this.COMMANDS[3].matches(".*")) {
+			System.out.println("Invalid argument: " + this.COMMANDS[3]);
 			return false;
 		}
 		

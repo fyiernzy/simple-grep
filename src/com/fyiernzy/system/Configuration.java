@@ -1,11 +1,17 @@
 package com.fyiernzy.system;
 
 public class Configuration {
-	static String commandHead = "fop";
-	static String commandDecor = ">>>";
-	static String userName = "localHost";;
-	static String userEmail = "localHost@root.com";
-	static String sourceFile = "./io_files/extracted_log.txt";
+	private static final String DEFAULT_DECOR = ">>>";
+	private static final String DEFAULT_HEAD = "fop";
+	private static final String DEFAULT_NAME = "localHost";;
+	private static final String DEFAULT_EMAIL = "localHost@root.com";
+	private static final String DEFAULT_FILE = "../WIX1002/src/com/fyiernzy/Assignment/Extracted_File/extracted_log.txt";
+	
+	static String commandHead = DEFAULT_HEAD;
+	static String commandDecor = DEFAULT_DECOR;
+	static String userName = DEFAULT_NAME;;
+	static String userEmail = DEFAULT_EMAIL;
+	static String sourceFile = DEFAULT_FILE;
 	
 	public static void setName(String name) {
 		Configuration.userName = name;
@@ -45,6 +51,14 @@ public class Configuration {
 	
 	public static String getSourceFile() {
 		return Configuration.sourceFile;
+	}
+	
+	public static void setDefault() {
+		Configuration.userName = DEFAULT_NAME;
+		Configuration.userEmail = DEFAULT_EMAIL;
+		Configuration.commandHead = DEFAULT_HEAD;
+		Configuration.commandDecor = DEFAULT_DECOR;
+		Configuration.sourceFile = DEFAULT_FILE;
 	}
 
 }
