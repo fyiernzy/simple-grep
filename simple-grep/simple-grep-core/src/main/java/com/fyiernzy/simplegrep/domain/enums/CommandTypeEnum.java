@@ -5,9 +5,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author Ng Zhi Yang
+ */
 
 @Getter
 public enum CommandTypeEnum {
+    GREP("grep", List.of("g")),
     FIND("find", List.of("f")),
     SAVE("save", List.of("s")),
     LIST("list", List.of("l")),
@@ -23,6 +29,13 @@ public enum CommandTypeEnum {
     CommandTypeEnum(String code, List<String> aliases) {
         this.code = code;
         this.aliases = aliases;
+    }
+    
+    public static @Nullable CommandTypeEnum of(@Nullable String arg) {
+        if (arg == null) {
+            return null;
+        }
+        return Optional.ofNullable(fromCode(arg)).orElseGet(() -> fromAlias(arg));
     }
     
     public static @Nullable CommandTypeEnum fromCode(@Nullable String code) {
